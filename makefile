@@ -64,7 +64,7 @@ else ifneq ($(WINDOWS),)
   # settings for windows
   MLARCH := win64
 else
-  # settins for linux
+  # settings for linux
   MLARCH := glnxa64
 endif
 
@@ -100,7 +100,7 @@ else ifneq ($(WINDOWS),)
   LDLIBS :=
   LDLIBS += -lgfortran -lquadmath -lblas
 else
-  # settins for linux
+  # settings for linux
   LD := gcc
   LIB_SUFFIX := so
   EXPORT_SYMBOLS := src/symbols.map
