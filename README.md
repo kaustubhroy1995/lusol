@@ -165,7 +165,7 @@ compatibility with Xcode 7.
 ### Install `gfortran` on Mac OS X
 
 1. Install [Homebrew][HB]
-3. `$ brew install gcc`
+2. `$ brew install gcc`
 
 ### Install Build Tools on Windows
 
