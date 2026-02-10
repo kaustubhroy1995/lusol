@@ -48,6 +48,8 @@ x = lu.solve(b)  # Solve A*x = b
 - Adding the `src` directory to your PATH, or
 - Copying `libclusol.dll` to your Python working directory
 
+**macOS Note:** On Apple Silicon Macs (M1/M2/M3), ensure you have installed `gfortran` via Homebrew (`brew install gcc`). The build system automatically detects your architecture and builds the appropriate native binary.
+
 See [pylusol/README.md](pylusol/README.md) for detailed Python documentation and [examples/pylusol_example.py](examples/pylusol_example.py) for usage examples.
 
 ## Contents
@@ -108,7 +110,8 @@ See `>>> help lusol_obj`.
 The build environments as of 2016-01-26 are:
 
 - Fedora 21 & Matlab 2013b
-- Mac OS X 10.11 & Matlab 2015b
+- Mac OS X 10.11 & Matlab 2015b (Intel)
+- macOS 12+ & Matlab 2023b+ (Apple Silicon)
 - Windows 10 with MSYS2/MinGW-w64
 
 Building the LUSOL interface in other environments may require modification of
@@ -123,11 +126,13 @@ Linux:
 * `gfortran`
 * Matlab
 
-Mac:
+Mac (Intel & Apple Silicon):
 
 * [Xcode][XC] for `clang` and `make`
-* `gfortran` (possibly via [Homebrew][HB])
-* Matlab
+* `gfortran` (via [Homebrew][HB])
+* Matlab (optional, for Matlab interface)
+
+**Note:** The build automatically detects whether you're on Intel (x86_64) or Apple Silicon (arm64) and configures appropriately.
 
 Windows:
 
@@ -168,8 +173,24 @@ compatibility with Xcode 7.
 
 ### Install `gfortran` on Mac OS X
 
+#### Intel Macs and Apple Silicon (M1/M2/M3)
+
 1. Install [Homebrew][HB]
-2. `$ brew install gcc`
+2. Install GCC (includes gfortran):
+   ```bash
+   brew install gcc
+   ```
+
+**Apple Silicon specific notes:**
+- The build system automatically detects Apple Silicon (arm64) and uses appropriate compiler flags
+- Matlab R2023b or later is recommended for native Apple Silicon support
+- For Python-only installation (without Matlab), the standard `make` command works on both Intel and Apple Silicon Macs
+- The generated library will be `libclusol.dylib` with the correct architecture
+
+To verify your architecture:
+```bash
+uname -m  # Returns "arm64" on Apple Silicon, "x86_64" on Intel
+```
 
 ### Install Build Tools on Windows
 

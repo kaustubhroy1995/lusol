@@ -9,12 +9,23 @@ ifeq ($(OS),Windows_NT)
   WINDOWS := windows
 endif
 
+# detect architecture on macOS (for Apple Silicon vs Intel)
+ifneq ($(DARWIN),)
+  ARCH := $(shell uname -m)
+endif
+
 # C compiler
 ifneq ($(DARWIN),)
-  # C compiler for osx
+  # C compiler for macOS
   CC := clang
   CPPFLAGS :=
-  CFLAGS := -arch x86_64 -fPIC
+  ifeq ($(ARCH),arm64)
+    # Apple Silicon (M1/M2/M3)
+    CFLAGS := -arch arm64 -fPIC
+  else
+    # Intel Mac
+    CFLAGS := -arch x86_64 -fPIC
+  endif
 else ifneq ($(WINDOWS),)
   # C compiler for windows
   CC := gcc
@@ -32,12 +43,18 @@ FOPT := -O3
 
 # Fortran compilers
 ifneq ($(DARWIN),)
-  # Fortran 90 compiler
+  # Fortran compilers for macOS
   F90C := gfortran
-  F90FLAGS := -m64 -fPIC -Jsrc $(FOPT)
-  # Fortran 77 compiler
   F77C := gfortran
-  F77FLAGS := -m64 -fPIC -fdefault-integer-8 $(FOPT)
+  ifeq ($(ARCH),arm64)
+    # Apple Silicon (M1/M2/M3)
+    F90FLAGS := -fPIC -Jsrc $(FOPT)
+    F77FLAGS := -fPIC -fdefault-integer-8 $(FOPT)
+  else
+    # Intel Mac
+    F90FLAGS := -m64 -fPIC -Jsrc $(FOPT)
+    F77FLAGS := -m64 -fPIC -fdefault-integer-8 $(FOPT)
+  endif
 else ifneq ($(WINDOWS),)
   # Fortran compilers for windows
   F90C := gfortran
@@ -58,8 +75,14 @@ endif
 ML := matlab
 MLFLAGS := -nojvm -nodisplay
 ifneq ($(DARWIN),)
-  # settings for mac os x
-  MLARCH := maci64
+  # settings for macOS
+  ifeq ($(ARCH),arm64)
+    # Apple Silicon uses maca64
+    MLARCH := maca64
+  else
+    # Intel Mac uses maci64
+    MLARCH := maci64
+  endif
 else ifneq ($(WINDOWS),)
   # settings for windows
   MLARCH := win64
@@ -70,24 +93,34 @@ endif
 
 # Linker
 ifneq ($(DARWIN),)
-  # settings for mac os x
+  # settings for macOS
   LD := clang
   LIB_SUFFIX := dylib
   EXPORT_SYMBOLS := src/symbols.osx
   LDFLAGS := -dynamiclib
-  LDFLAGS += -arch x86_64
+  ifeq ($(ARCH),arm64)
+    # Apple Silicon (M1/M2/M3)
+    LDFLAGS += -arch arm64
+  else
+    # Intel Mac
+    LDFLAGS += -arch x86_64
+  endif
   LDFLAGS += -Wl,-twolevel_namespace
   LDFLAGS += -Wl,-no_compact_unwind
   LDFLAGS += -undefined error
   LDFLAGS += -bind_at_load
   LDFLAGS += -Wl,-exported_symbols_list,$(EXPORT_SYMBOLS)
   LDLIBS :=
-  # static libraries
-  LDLIBS += /usr/local/opt/gcc/lib/gcc/5/libgfortran.a
-  LDLIBS += /usr/local/opt/gcc/lib/gcc/5/libquadmath.a
-  LDLIBS += /usr/local/Cellar/gcc/5.3.0/lib/gcc/5/gcc/x86_64-apple-darwin15.0.0/5.3.0/libgcc.a
-  # get blas from Matlab
-  LDLIBS += -L/Applications/MATLAB_R2015b.app/bin/maci64 -lmwblas
+  # Try to link against gfortran/quadmath/gcc libraries dynamically
+  # Fall back to Homebrew paths if static libraries are not found
+  LDLIBS += -lgfortran -lquadmath -lgcc_s.1
+  # get blas from Matlab or system
+  # For modern Matlab versions on Apple Silicon, use the appropriate architecture
+  ifeq ($(ARCH),arm64)
+    LDLIBS += -L/Applications/MATLAB_R2023b.app/bin/maca64 -lmwblas
+  else
+    LDLIBS += -L/Applications/MATLAB_R2015b.app/bin/maci64 -lmwblas
+  endif
 else ifneq ($(WINDOWS),)
   # settings for windows
   LD := gcc
