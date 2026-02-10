@@ -90,28 +90,30 @@ class LUSOL:
         self.w = np.zeros(self.n, dtype=np.float64)
         
         # Copy matrix data into LUSOL arrays (1-indexed for Fortran)
+        # NOTE: LUSOL expects row indices in indc and column indices in indr!
         for i in range(self.nelem):
             self.a[i] = A_coo.data[i]
-            self.indc[i] = A_coo.col[i] + 1  # Convert to 1-indexed
-            self.indr[i] = A_coo.row[i] + 1  # Convert to 1-indexed
+            self.indc[i] = A_coo.row[i] + 1  # Row index in indc (1-indexed)
+            self.indr[i] = A_coo.col[i] + 1  # Column index in indr (1-indexed)
         
         # Perform factorization
         self._factorize()
     
     def _set_default_parameters(self):
         """Set default LUSOL parameters"""
-        # luparm parameters
+        # luparm parameters (0-indexed in Python, 1-indexed in Fortran docs)
         self.luparm[0] = 0   # nout: output unit (0 = no output)
         self.luparm[1] = 10  # lprint: print level
         self.luparm[2] = 5   # maxcol: max columns in Markowitz search
-        self.luparm[5] = 3   # keepLU: keep = 1, 2, or 3 to keep some LU factors
+        self.luparm[5] = 0   # pivot: pivoting method (0=TPP, 1=TRP, 2=TCP, 3=TSP)
+        self.luparm[7] = 1   # keepLU: keep = 1 to save LU factors
         
         # parmlu parameters
-        self.parmlu[0] = 3.67  # Lmax1: max multiplier in initial Lmax
-        self.parmlu[1] = 3.67  # Lmax2: max multiplier in later Lmax
-        self.parmlu[2] = 0.1   # small: absolute pivot tolerance
-        self.parmlu[3] = 0.5   # Utol1: abs tol for flagging small diagonals
-        self.parmlu[4] = 0.5   # Utol2: rel tol for flagging small diagonals
+        self.parmlu[0] = 10.0  # Lmax1: max multiplier in initial Lmax
+        self.parmlu[1] = 10.0  # Lmax2: max multiplier in later Lmax
+        self.parmlu[2] = 1e-13  # small: absolute pivot tolerance (eps^0.8)
+        self.parmlu[3] = 1e-11  # Utol1: abs tol for flagging small diagonals (eps^0.67)
+        self.parmlu[4] = 1e-11  # Utol2: rel tol for flagging small diagonals (eps^0.67)
         self.parmlu[5] = 3.0   # Uspace: Space factor for U
         self.parmlu[6] = 0.3   # dens1: density for threshold pivoting
         self.parmlu[7] = 0.5   # dens2: density for dense LU

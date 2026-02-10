@@ -78,7 +78,7 @@ else
   LDFLAGS += -Wl,--version-script,$(EXPORT_SYMBOLS)
   # libraries
   LDLIBS :=
-  LDLIBS += -Wl,-rpath,/usr/lib -lgfortran
+  LDLIBS += -Wl,-rpath,/usr/lib -lgfortran -lblas
 endif
 
 # list of files required by matlab
