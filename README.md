@@ -44,6 +44,10 @@ x = lu.solve(b)  # Solve A*x = b
    pip install -e .
    ```
 
+**Windows Note:** On Windows, ensure you're using the MSYS2 MinGW 64-bit terminal for the `make` command. The generated `libclusol.dll` must be accessible to Python, either by:
+- Adding the `src` directory to your PATH, or
+- Copying `libclusol.dll` to your Python working directory
+
 See [pylusol/README.md](pylusol/README.md) for detailed Python documentation and [examples/pylusol_example.py](examples/pylusol_example.py) for usage examples.
 
 ## Contents
@@ -180,14 +184,62 @@ compatibility with Xcode 7.
    ```
 4. Add MinGW-w64 bin directory to system PATH (e.g., `C:\msys64\mingw64\bin`)
 
+#### Troubleshooting Windows Build Issues
+
+**Problem: `-lblas` linker error**
+
+If you encounter errors like:
+```
+/usr/bin/ld: cannot find -lblas
+collect2.exe: error: ld returned 1 exit status
+```
+
+**Solution:** The OpenBLAS library is installed but the linker can't find it. Verify the installation:
+
+```bash
+# Check if OpenBLAS is installed
+pacman -Qs openblas
+
+# Verify library files exist
+ls /mingw64/lib/libblas* /mingw64/lib/libopenblas*
+```
+
+If the library is missing, reinstall OpenBLAS:
+```bash
+pacman -S mingw-w64-x86_64-openblas
+```
+
+**Problem: DLL not found when running Python code**
+
+If you get errors about missing `libclusol.dll` or `libopenblas.dll`:
+
+1. Ensure MinGW-w64 bin directory is in your system PATH
+2. For Python usage, you may need to copy the DLL to your working directory:
+   ```bash
+   cp src/libclusol.dll .
+   ```
+3. Or add the src directory to your PATH temporarily:
+   ```bash
+   set PATH=%PATH%;C:\path\to\lusol\src
+   ```
+
 ### Steps
 
 From the base directory:
 
-```
+**Linux/macOS:**
+```bash
 $ make
 $ make matlab
 ```
+
+**Windows (MSYS2 MinGW 64-bit terminal):**
+```bash
+$ make
+$ make matlab  # If using Matlab interface
+```
+
+For Python-only installation on Windows, just run `make` then proceed to the Python installation section.
 
 Test:
 
@@ -200,7 +252,7 @@ See <NOTES.md> for example build output.
 ### Notes
 
 The basic requirements to build LUSOL are GNU `make`, `gfortran`, a C compiler,
-and Matlab.  The build works with `gcc` on Linux and `clang` on Mac OS X.  It
+and Matlab.  The build works with `gcc` on Linux and Windows (via MinGW-w64), and `clang` on Mac OS X.  It
 may be necessary to modify the compiler variables in the `makefile` (`CC`,
 `F90C`, and `F77C`) depending on the operating system and environment.
 
@@ -210,6 +262,8 @@ R2015b this is achieved with:
 ```
 $ export PATH=/Applications/MATLAB_R2015b.app/bin:$PATH
 ```
+
+On Windows, ensure the Matlab bin directory is in your PATH (e.g., `C:\Program Files\MATLAB\R2021a\bin`).
 
 The `makefile` may have to be modified on Mac OS X depending on versions of
 Matlab and `gfortran`.
