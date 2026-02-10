@@ -186,6 +186,11 @@ compatibility with Xcode 7.
 - Matlab R2023b or later is recommended for native Apple Silicon support
 - For Python-only installation (without Matlab), the standard `make` command works on both Intel and Apple Silicon Macs
 - The generated library will be `libclusol.dylib` with the correct architecture
+- To use a different Matlab version, set the `MATLAB_PATH` environment variable:
+  ```bash
+  export MATLAB_PATH=/Applications/MATLAB_R2024a.app
+  make
+  ```
 
 To verify your architecture:
 ```bash

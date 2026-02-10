@@ -115,11 +115,16 @@ ifneq ($(DARWIN),)
   # Fall back to Homebrew paths if static libraries are not found
   LDLIBS += -lgfortran -lquadmath -lgcc_s.1
   # get blas from Matlab or system
-  # For modern Matlab versions on Apple Silicon, use the appropriate architecture
+  # Note: You can override the Matlab path by setting MATLAB_PATH environment variable
+  # Example: export MATLAB_PATH=/Applications/MATLAB_R2024a.app
   ifeq ($(ARCH),arm64)
-    LDLIBS += -L/Applications/MATLAB_R2023b.app/bin/maca64 -lmwblas
+    # Apple Silicon - Matlab R2023b or later required
+    MATLAB_PATH ?= /Applications/MATLAB_R2023b.app
+    LDLIBS += -L$(MATLAB_PATH)/bin/maca64 -lmwblas
   else
-    LDLIBS += -L/Applications/MATLAB_R2015b.app/bin/maci64 -lmwblas
+    # Intel Mac - adjust version as needed
+    MATLAB_PATH ?= /Applications/MATLAB_R2015b.app
+    LDLIBS += -L$(MATLAB_PATH)/bin/maci64 -lmwblas
   endif
 else ifneq ($(WINDOWS),)
   # settings for windows
