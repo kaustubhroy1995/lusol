@@ -2,11 +2,49 @@
 
 [LUSOL][LUSOL] maintains LU factors of a square or rectangular sparse matrix.
 
-This repository provides [LUSOL][LUSOL] source code and a Matlab interface.
+This repository provides [LUSOL][LUSOL] source code, a Matlab interface, and **Python bindings**.
 
 The code is distributed under the terms of the MIT License or the BSD License.
 
   [LUSOL]: http://web.stanford.edu/group/SOL/software/lusol/
+
+## Python Interface (PyLUSOL)
+
+PyLUSOL provides a Python interface to LUSOL with support for:
+
+- LU factorization of sparse matrices
+- Solving linear systems (A*x=b, A'*x=b)
+- Column/row replacement for efficient updates
+- Matrix-vector multiplication with stored factors
+- Full NumPy and SciPy sparse matrix support
+
+### Quick Start (Python)
+
+```python
+import numpy as np
+from pylusol import LUSOL
+
+# Factorize and solve
+A = np.array([[4, 1, 0], [1, 4, 1], [0, 1, 4]], dtype=float)
+b = np.array([1, 2, 3], dtype=float)
+
+lu = LUSOL(A)
+x = lu.solve(b)  # Solve A*x = b
+```
+
+### Python Installation
+
+1. Build the C library:
+   ```bash
+   make
+   ```
+
+2. Install Python package:
+   ```bash
+   pip install -e .
+   ```
+
+See [pylusol/README.md](pylusol/README.md) for detailed Python documentation and [examples/pylusol_example.py](examples/pylusol_example.py) for usage examples.
 
 ## Contents
 
