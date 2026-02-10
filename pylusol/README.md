@@ -247,7 +247,11 @@ If you get an error about `libclusol.so`, `libclusol.dylib`, or `libclusol.dll` 
    
    Or copy the DLL to your working directory:
    ```bash
+   # In MSYS2 terminal:
    cp src/libclusol.dll .
+   
+   # In Windows Command Prompt:
+   copy src\libclusol.dll .
    ```
 
 ### Windows-specific issues

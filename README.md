@@ -216,11 +216,15 @@ If you get errors about missing `libclusol.dll` or `libopenblas.dll`:
 1. Ensure MinGW-w64 bin directory is in your system PATH
 2. For Python usage, you may need to copy the DLL to your working directory:
    ```bash
+   # In MSYS2 terminal:
    cp src/libclusol.dll .
+   
+   # In Windows Command Prompt:
+   copy src\libclusol.dll .
    ```
 3. Or add the src directory to your PATH temporarily:
    ```bash
-   set PATH=%PATH%;C:\path\to\lusol\src
+   set PATH=C:\path\to\lusol\src;%PATH%
    ```
 
 ### Steps
