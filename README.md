@@ -105,6 +105,7 @@ The build environments as of 2016-01-26 are:
 
 - Fedora 21 & Matlab 2013b
 - Mac OS X 10.11 & Matlab 2015b
+- Windows 10 with MSYS2/MinGW-w64
 
 Building the LUSOL interface in other environments may require modification of
 `makefile` and `matlab/lusol_build.m`.
@@ -124,8 +125,19 @@ Mac:
 * `gfortran` (possibly via [Homebrew][HB])
 * Matlab
 
+Windows:
+
+* [MSYS2][MSYS2] or [MinGW-w64][MINGW]
+* `make` (included in MSYS2)
+* `gcc` (included in MinGW-w64)
+* `gfortran` (included in MinGW-w64)
+* BLAS library (e.g., OpenBLAS)
+* Matlab (optional, for Matlab interface)
+
   [HB]: http://brew.sh/
   [XC]: http://itunes.apple.com/us/app/xcode/id497799835
+  [MSYS2]: https://www.msys2.org/
+  [MINGW]: https://www.mingw-w64.org/
 
 Notes:
 
@@ -153,7 +165,20 @@ compatibility with Xcode 7.
 ### Install `gfortran` on Mac OS X
 
 1. Install [Homebrew][HB]
-3. `$ brew install gcc`
+2. `$ brew install gcc`
+
+### Install Build Tools on Windows
+
+1. Install [MSYS2][MSYS2] from https://www.msys2.org/
+2. Open MSYS2 MinGW 64-bit terminal
+3. Install required packages:
+   ```bash
+   pacman -S mingw-w64-x86_64-gcc
+   pacman -S mingw-w64-x86_64-gcc-fortran
+   pacman -S mingw-w64-x86_64-openblas
+   pacman -S make
+   ```
+4. Add MinGW-w64 bin directory to system PATH (e.g., `C:\msys64\mingw64\bin`)
 
 ### Steps
 

@@ -4,6 +4,10 @@
 # detect operating system
 OSLOWER := $(shell uname -s 2>/dev/null | tr [:upper:] [:lower:])
 DARWIN := $(strip $(findstring darwin, $(OSLOWER)))
+WINDOWS := $(strip $(findstring mingw, $(OSLOWER))$(findstring msys, $(OSLOWER))$(findstring cygwin, $(OSLOWER)))
+ifeq ($(OS),Windows_NT)
+  WINDOWS := windows
+endif
 
 # C compiler
 ifneq ($(DARWIN),)
@@ -11,6 +15,11 @@ ifneq ($(DARWIN),)
   CC := clang
   CPPFLAGS :=
   CFLAGS := -arch x86_64 -fPIC
+else ifneq ($(WINDOWS),)
+  # C compiler for windows
+  CC := gcc
+  CPPFLAGS :=
+  CFLAGS := -m64
 else
   # C compiler for linux
   CC := gcc
@@ -29,6 +38,13 @@ ifneq ($(DARWIN),)
   # Fortran 77 compiler
   F77C := gfortran
   F77FLAGS := -m64 -fPIC -fdefault-integer-8 $(FOPT)
+else ifneq ($(WINDOWS),)
+  # Fortran compilers for windows
+  F90C := gfortran
+  F90FLAGS := -m64 -Jsrc $(FOPT)
+  # Fortran 77 compiler
+  F77C := gfortran
+  F77FLAGS := -m64 -fdefault-integer-8 $(FOPT)
 else
   # Fortran 90 compiler
   F90C := gfortran
@@ -44,8 +60,11 @@ MLFLAGS := -nojvm -nodisplay
 ifneq ($(DARWIN),)
   # settings for mac os x
   MLARCH := maci64
+else ifneq ($(WINDOWS),)
+  # settings for windows
+  MLARCH := win64
 else
-  # settins for linux
+  # settings for linux
   MLARCH := glnxa64
 endif
 
@@ -69,8 +88,19 @@ ifneq ($(DARWIN),)
   LDLIBS += /usr/local/Cellar/gcc/5.3.0/lib/gcc/5/gcc/x86_64-apple-darwin15.0.0/5.3.0/libgcc.a
   # get blas from Matlab
   LDLIBS += -L/Applications/MATLAB_R2015b.app/bin/maci64 -lmwblas
+else ifneq ($(WINDOWS),)
+  # settings for windows
+  LD := gcc
+  LIB_SUFFIX := dll
+  EXPORT_SYMBOLS := src/symbols.def
+  LDFLAGS := -m64 -shared
+  LDFLAGS += -Wl,--out-implib,src/libclusol.dll.a
+  LDFLAGS += $(EXPORT_SYMBOLS)
+  # libraries
+  LDLIBS :=
+  LDLIBS += -lgfortran -lquadmath -lblas
 else
-  # settins for linux
+  # settings for linux
   LD := gcc
   LIB_SUFFIX := so
   EXPORT_SYMBOLS := src/symbols.map
@@ -177,6 +207,7 @@ matlab_test: $(MATLAB_FILES)
 clean:
 	$(RM) src/*.o
 	$(RM) src/*.$(LIB_SUFFIX)
+	$(RM) src/*.dll.a
 	$(RM) src/*.mod
 	$(RM) $(MATLAB_FILES)
 
