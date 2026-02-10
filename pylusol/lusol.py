@@ -256,14 +256,17 @@ class LUSOL:
             if x.shape[0] != self.m:
                 raise ValueError(f"Input vector size {x.shape[0]} does not match matrix rows {self.m}")
             v = x.copy()
-        elif mode in [3, 4, 5]:
+        elif mode in [3, 5]:
             # Input goes into w, must be size n
             if x.shape[0] != self.n:
                 raise ValueError(f"Input vector size {x.shape[0]} does not match matrix columns {self.n}")
             w = x.copy()
-        # Special case for mode 4: both v and w get values
-        if mode == 4:
-            v = w.copy()
+        elif mode == 4:
+            # Special case: input is size m, goes into both v and w
+            # According to Matlab: v = w (but input x is size m)
+            if x.shape[0] != self.m:
+                raise ValueError(f"Input vector size {x.shape[0]} does not match matrix rows {self.m}")
+            v = x.copy()
         
         _clusol.clu6mul(
             ctypes.byref(ctypes.c_int64(mode)),

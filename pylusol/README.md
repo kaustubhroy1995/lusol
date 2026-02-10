@@ -110,11 +110,17 @@ x2 = lu.solve(b)
 ### Matrix-Vector Multiplication
 
 ```python
-# Multiply by original matrix: w = A*x
-w = lu.mulA(x, mode=1)
+# Multiply by original matrix: y = A*x
+y = lu.mulA(x, mode=5)
 
-# Multiply by transpose: w = A'*x
-wt = lu.mulA(x, mode=2)
+# Multiply by transpose: y = A'*x
+yt = lu.mulA(x, mode=6)
+
+# Lower-level operations:
+# mode 1: y = L*x
+# mode 2: y = L'*x  
+# mode 3: y = U*x
+# mode 4: y = U'*x
 ```
 
 ### Get Factorization Statistics
@@ -152,15 +158,19 @@ Solve a linear system using the LU factors.
     - 6: solve A'*x = b
 - **Returns:** Solution vector
 
-#### `mulA(x, mode=1)`
+#### `mulA(x, mode=5)`
 
 Multiply by the original matrix or its transpose.
 
 - **Parameters:**
   - `x`: Input vector
   - `mode`: Multiplication mode
-    - 1: compute w = A*x
-    - 2: compute w = A'*x
+    - 1: compute y = L*x (L factor)
+    - 2: compute y = L'*x (L transpose)
+    - 3: compute y = U*x (U factor)
+    - 4: compute y = U'*x (U transpose)
+    - 5: compute y = A*x (default)
+    - 6: compute y = A'*x (A transpose)
 - **Returns:** Result vector
 
 #### `repcol(v, jrep, mode1=2, mode2=2)`
