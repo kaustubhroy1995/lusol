@@ -162,7 +162,7 @@ class LUSOL:
             - 1: solve L*v = v
             - 2: solve L'*v = v
             - 3: solve U*w = v
-            - 4: solve U'*w = v
+            - 4: solve U'*v = w
             - 5: solve A*x = b (default)
             - 6: solve A'*x = b
         
@@ -172,11 +172,24 @@ class LUSOL:
             Solution vector
         """
         b = np.asarray(b, dtype=np.float64)
-        if b.shape[0] != self.m:
-            raise ValueError(f"RHS vector size {b.shape[0]} does not match matrix rows {self.m}")
         
-        v = b.copy()
+        # Check input size and initialize v, w based on mode
+        v = np.zeros(self.m, dtype=np.float64)
         w = np.zeros(self.n, dtype=np.float64)
+        
+        if mode in [1, 2, 3, 5]:
+            # Input goes into v, must be size m
+            if b.shape[0] != self.m:
+                raise ValueError(f"Right-hand side vector size {b.shape[0]} does not match matrix rows {self.m}")
+            v = b.copy()
+        elif mode in [4, 6]:
+            # Input goes into w, must be size n
+            if b.shape[0] != self.n:
+                raise ValueError(f"Right-hand side vector size {b.shape[0]} does not match matrix columns {self.n}")
+            w = b.copy()
+        else:
+            raise ValueError(f"Invalid mode {mode}. Must be 1-6.")
+        
         inform = ctypes.c_int64(0)
         
         _clusol.clu6sol(
@@ -203,7 +216,13 @@ class LUSOL:
         if inform.value != 0:
             raise RuntimeError(f"Solve failed with inform = {inform.value}")
         
-        return w if mode in [5, 6] else v
+        # Return appropriate output based on mode
+        if mode in [3, 5]:
+            # Output is in w
+            return w
+        else:
+            # Output is in v (modes 1, 2, 4, 6)
+            return v
     
     def mulA(self, x, mode=1):
         """
@@ -214,17 +233,37 @@ class LUSOL:
         x : array_like
             Input vector
         mode : int, optional
-            - 1: compute w = A*x (default)
-            - 2: compute w = A'*x
+            - 1: compute y = L*x (L factor, x size m, output size m)
+            - 2: compute y = L'*x (L transpose, x size m, output size m)
+            - 3: compute y = U*x (U factor, x size n, output size m)
+            - 4: compute y = U'*x (U transpose, x size m, output size n)
+            - 5: compute y = A*x (default, x size n, output size m)
+            - 6: compute y = A'*x (A transpose, x size m, output size n)
         
         Returns
         -------
-        w : ndarray
+        y : ndarray
             Result vector
         """
         x = np.asarray(x, dtype=np.float64)
-        v = x.copy()
-        w = np.zeros(self.m if mode == 1 else self.n, dtype=np.float64)
+        
+        # Initialize v and w based on mode
+        v = np.zeros(self.m, dtype=np.float64)
+        w = np.zeros(self.n, dtype=np.float64)
+        
+        if mode in [1, 2, 6]:
+            # Input goes into v, must be size m
+            if x.shape[0] != self.m:
+                raise ValueError(f"Input vector size {x.shape[0]} does not match matrix rows {self.m}")
+            v = x.copy()
+        elif mode in [3, 4, 5]:
+            # Input goes into w, must be size n
+            if x.shape[0] != self.n:
+                raise ValueError(f"Input vector size {x.shape[0]} does not match matrix columns {self.n}")
+            w = x.copy()
+        # Special case for mode 4: both v and w get values
+        if mode == 4:
+            v = w.copy()
         
         _clusol.clu6mul(
             ctypes.byref(ctypes.c_int64(mode)),
@@ -246,7 +285,13 @@ class LUSOL:
             self.locr.ctypes.data_as(ctypes.POINTER(ctypes.c_int64))
         )
         
-        return w
+        # Return appropriate output based on mode
+        if mode in [1, 2, 3, 5]:
+            # Output is in v
+            return v
+        else:  # mode in [4, 6]
+            # Output is in w
+            return w
     
     def repcol(self, v, jrep, mode1=2, mode2=2):
         """
