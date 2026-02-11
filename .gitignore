@@ -10,12 +10,6 @@ matlab/libclusol_proto*.m
 *.DS_Store
 .MATLABDriveTag
 
-# Pre-compiled shared libraries (allow these to be committed)
-!pylusol/lib/
-!pylusol/lib/*.so
-!pylusol/lib/*.dylib
-!pylusol/lib/*.dll
-
 # Python
 *.py[cod]
 *$py.class
@@ -27,7 +21,6 @@ downloads/
 eggs/
 .eggs/
 lib/
-!pylusol/lib/
 lib64/
 parts/
 sdist/
@@ -39,3 +32,9 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# Pre-compiled shared libraries (override *.so, *.dylib, and lib/ rules above)
+!pylusol/lib/
+!pylusol/lib/*.so
+!pylusol/lib/*.dylib
+!pylusol/lib/*.dll
