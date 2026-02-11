@@ -26,15 +26,16 @@ efficient methods for:
 Installation
 ------------
 
-Before installing PyLUSOL, you need to build the LUSOL C library:
+Pre-compiled shared libraries for Linux (x86_64) are included. Simply install:
+
+```bash
+pip install -e .
+```
+
+For other platforms, build the LUSOL C library first:
 
 ```bash
 make
-```
-
-Then install the Python package:
-
-```bash
 pip install -e .
 ```
 
@@ -84,6 +85,9 @@ setup(
     author_email='',
     url='https://github.com/kaustubhroy1995/lusol',
     packages=find_packages(),
+    package_data={
+        'pylusol': ['lib/*.so', 'lib/*.dylib', 'lib/*.dll'],
+    },
     python_requires='>=3.6',
     install_requires=[
         'numpy>=1.15.0',

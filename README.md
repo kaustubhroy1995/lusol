@@ -34,15 +34,18 @@ x = lu.solve(b)  # Solve A*x = b
 
 ### Python Installation
 
-1. Build the C library:
-   ```bash
-   make
-   ```
+Pre-compiled shared libraries for Linux (x86_64) are included in `pylusol/lib/`. No compilation is needed for this platform:
 
-2. Install Python package:
-   ```bash
-   pip install -e .
-   ```
+```bash
+pip install -e .
+```
+
+For other platforms (macOS, Windows), build the C library first:
+
+```bash
+make
+pip install -e .
+```
 
 **Windows Note:** On Windows, ensure you're using the MSYS2 MinGW 64-bit terminal for the `make` command. The generated `libclusol.dll` must be accessible to Python, either by:
 - Adding the `src` directory to your PATH, or
