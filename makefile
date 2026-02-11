@@ -44,8 +44,8 @@ FOPT := -O3
 # Fortran compilers
 ifneq ($(DARWIN),)
   # Fortran compilers for macOS
-  F90C := gfortran
-  F77C := gfortran
+  F90C := /opt/homebrew/bin/gfortran
+  F77C := /opt/homebrew/bin/gfortran
   ifeq ($(ARCH),arm64)
     # Apple Silicon (M1/M2/M3)
     F90FLAGS := -fPIC -Jsrc $(FOPT)
@@ -101,15 +101,16 @@ ifneq ($(DARWIN),)
   ifeq ($(ARCH),arm64)
     # Apple Silicon (M1/M2/M3)
     LDFLAGS += -arch arm64
-  else
-    # Intel Mac
-    LDFLAGS += -arch x86_64
   endif
   LDFLAGS += -Wl,-twolevel_namespace
   LDFLAGS += -Wl,-no_compact_unwind
   LDFLAGS += -undefined error
   LDFLAGS += -bind_at_load
   LDFLAGS += -Wl,-exported_symbols_list,$(EXPORT_SYMBOLS)
+
+#   GFORTRAN_LIBDIR := $(dir $(shell $(F90C) -print-file-name=libgfortran.dylib))
+#   QUADMATH_LIBDIR  := $(dir $(shell $(F90C) -print-file-name=libquadmath.dylib))
+
   LDLIBS :=
   # Try to link against gfortran/quadmath/gcc libraries dynamically
   # Fall back to Homebrew paths if static libraries are not found
