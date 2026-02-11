@@ -38,7 +38,3 @@ MANIFEST
 !pylusol/lib/*.so
 !pylusol/lib/*.dylib
 !pylusol/lib/*.dll
-!pylusol/lib/darwin_arm64/
-!pylusol/lib/darwin_arm64/*.dylib
-!pylusol/lib/darwin_x86_64/
-!pylusol/lib/darwin_x86_64/*.dylib
