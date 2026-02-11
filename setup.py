@@ -26,7 +26,7 @@ efficient methods for:
 Installation
 ------------
 
-Pre-compiled shared libraries for Linux (x86_64) are included. Simply install:
+Pre-compiled shared libraries for Linux (x86_64) and Windows (x86_64) are included. Simply install:
 
 ```bash
 pip install -e .
@@ -72,7 +72,8 @@ Requirements
 - Python 3.6+
 - NumPy
 - SciPy
-- LUSOL C library (libclusol.so or libclusol.dylib)
+- LUSOL C library (libclusol.so, libclusol.dylib, or libclusol.dll)
+  Pre-compiled libraries for Linux (x86_64) and Windows (x86_64) are included.
 """
 
 setup(

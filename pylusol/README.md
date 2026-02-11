@@ -16,20 +16,20 @@ LUSOL maintains LU factors of square or rectangular sparse matrices. This Python
 
 ### Prerequisites
 
-1. **Build the LUSOL C library** first:
-   ```bash
-   make
-   ```
-   
-   This creates:
-   - `libclusol.so` on Linux
-   - `libclusol.dylib` on macOS (both Intel and Apple Silicon)
-   - `libclusol.dll` on Windows
+Pre-compiled shared libraries for **Linux (x86_64)** and **Windows (x86_64)** are included in `pylusol/lib/`. No compilation is needed for these platforms.
 
-2. **Python requirements**:
-   - Python 3.6 or higher
-   - NumPy >= 1.15.0
-   - SciPy >= 1.0.0
+For **macOS**, build the LUSOL C library first:
+```bash
+make
+```
+
+This creates:
+- `libclusol.dylib` on macOS (both Intel and Apple Silicon)
+
+**Python requirements**:
+- Python 3.6 or higher
+- NumPy >= 1.15.0
+- SciPy >= 1.0.0
 
 **macOS (Apple Silicon) specific requirements:**
 - Install `gfortran` via Homebrew: `brew install gcc`
@@ -260,21 +260,11 @@ If you get an error about `libclusol.so`, `libclusol.dylib`, or `libclusol.dll` 
 
 ### Windows-specific issues
 
-**Problem: `libclusol.dll` not found or missing dependencies**
+**Problem: `libclusol.dll` not found**
 
-Windows requires additional DLL dependencies (from MinGW-w64) to be in your PATH:
-- `libgfortran-*.dll`
-- `libquadmath-*.dll`
-- `libopenblas.dll` or `libblas.dll`
-- `libgcc_s_seh-*.dll`
+A pre-compiled `libclusol.dll` for Windows x86_64 is bundled in `pylusol/lib/`. If you installed via `pip install -e .`, it should be found automatically.
 
-**Solution:** Ensure the MinGW-w64 `bin` directory is in your system PATH (e.g., `C:\msys64\mingw64\bin`). This makes all required DLLs accessible.
-
-To verify:
-```cmd
-where libclusol.dll
-where libopenblas.dll
-```
+If you built from source and the bundled DLL isn't used, ensure the MinGW-w64 `bin` directory is in your system PATH (e.g., `C:\msys64\mingw64\bin`).
 
 ### macOS Apple Silicon issues
 

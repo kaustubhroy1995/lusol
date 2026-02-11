@@ -34,22 +34,18 @@ x = lu.solve(b)  # Solve A*x = b
 
 ### Python Installation
 
-Pre-compiled shared libraries for Linux (x86_64) are included in `pylusol/lib/`. No compilation is needed for this platform:
+Pre-compiled shared libraries for Linux (x86_64) and Windows (x86_64) are included in `pylusol/lib/`. No compilation is needed for these platforms:
 
 ```bash
 pip install -e .
 ```
 
-For other platforms (macOS, Windows), build the C library first:
+For macOS, build the C library first:
 
 ```bash
 make
 pip install -e .
 ```
-
-**Windows Note:** On Windows, ensure you're using the MSYS2 MinGW 64-bit terminal for the `make` command. The generated `libclusol.dll` must be accessible to Python, either by:
-- Adding the `src` directory to your PATH, or
-- Copying `libclusol.dll` to your Python working directory
 
 **macOS Note:** On Apple Silicon Macs (M1/M2/M3), ensure you have installed `gfortran` via Homebrew (`brew install gcc`). The build system automatically detects your architecture and builds the appropriate native binary.
 
