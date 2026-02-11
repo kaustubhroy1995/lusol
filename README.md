@@ -34,13 +34,13 @@ x = lu.solve(b)  # Solve A*x = b
 
 ### Python Installation
 
-Pre-compiled shared libraries for Linux (x86_64) and Windows (x86_64) are included in `pylusol/lib/`. No compilation is needed for these platforms:
+Pre-compiled shared libraries for Linux (x86_64), Windows (x86_64), and macOS (Apple Silicon arm64) are included in `pylusol/lib/`. No compilation is needed for these platforms:
 
 ```bash
 pip install -e .
 ```
 
-For macOS, build the C library first:
+For macOS Intel, build the C library first:
 
 ```bash
 make

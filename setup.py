@@ -26,13 +26,13 @@ efficient methods for:
 Installation
 ------------
 
-Pre-compiled shared libraries for Linux (x86_64) and Windows (x86_64) are included. Simply install:
+Pre-compiled shared libraries for Linux (x86_64), Windows (x86_64), and macOS (Apple Silicon arm64) are included. Simply install:
 
 ```bash
 pip install -e .
 ```
 
-For other platforms, build the LUSOL C library first:
+For other platforms (e.g., macOS Intel), build the LUSOL C library first:
 
 ```bash
 make
@@ -73,7 +73,7 @@ Requirements
 - NumPy
 - SciPy
 - LUSOL C library (libclusol.so, libclusol.dylib, or libclusol.dll)
-  Pre-compiled libraries for Linux (x86_64) and Windows (x86_64) are included.
+  Pre-compiled libraries for Linux (x86_64), Windows (x86_64), and macOS (Apple Silicon arm64) are included.
 """
 
 setup(
@@ -87,7 +87,8 @@ setup(
     url='https://github.com/kaustubhroy1995/lusol',
     packages=find_packages(),
     package_data={
-        'pylusol': ['lib/*.so', 'lib/*.dylib', 'lib/*.dll'],
+        'pylusol': ['lib/*.so', 'lib/*.dylib', 'lib/*.dll',
+                    'lib/darwin_arm64/*.dylib', 'lib/darwin_x86_64/*.dylib'],
     },
     python_requires='>=3.6',
     install_requires=[
