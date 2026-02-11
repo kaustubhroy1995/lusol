@@ -32,3 +32,9 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# Pre-compiled shared libraries (override *.so, *.dylib, and lib/ rules above)
+!pylusol/lib/
+!pylusol/lib/*.so
+!pylusol/lib/*.dylib
+!pylusol/lib/*.dll

@@ -26,7 +26,9 @@ def _find_library():
     
     # Search paths for the library
     search_paths = [
-        # Directory relative to this file
+        # Pre-compiled library bundled with the package
+        os.path.join(os.path.dirname(__file__), 'lib'),
+        # Directory relative to this file (for development builds)
         os.path.join(os.path.dirname(__file__), '..', 'src'),
         os.path.join(os.path.dirname(__file__), '..', 'matlab'),
         # System paths
