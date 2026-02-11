@@ -197,6 +197,12 @@ OBJ += $(F77_OBJ)
 .PHONY: all
 all: src/libclusol.$(LIB_SUFFIX) src/clusol.h
 
+# copy the built library into the Python package directory
+.PHONY: pylib
+pylib: src/libclusol.$(LIB_SUFFIX)
+	mkdir -p pylusol/lib
+	cp src/libclusol.$(LIB_SUFFIX) pylusol/lib/
+
 # pattern to compile fortran 77 files
 $(F77_OBJ) : %.o : %.f
 	$(F77C) $(F77FLAGS) -c $< -o $@

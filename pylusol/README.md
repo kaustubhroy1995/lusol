@@ -16,9 +16,13 @@ LUSOL maintains LU factors of square or rectangular sparse matrices. This Python
 
 ### Prerequisites
 
-Pre-compiled shared libraries for **Linux (x86_64)** and **Windows (x86_64)** are included in `pylusol/lib/`. No compilation is needed for these platforms.
+Pre-compiled shared libraries for **Linux (x86_64)**, **Windows (x86_64)**, and
+**macOS (Apple Silicon arm64)** are included in `pylusol/lib/`. No compilation is
+needed for these platforms.
 
-For **macOS**, build the LUSOL C library first:
+On **macOS**, if a pre-compiled library is not bundled for your architecture the
+installer will attempt to build it from source automatically. Build the LUSOL C
+library manually if needed:
 ```bash
 make
 ```

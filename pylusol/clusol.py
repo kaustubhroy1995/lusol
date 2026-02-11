@@ -12,7 +12,12 @@ from numpy.ctypeslib import ndpointer
 
 
 def _find_library():
-    """Find the LUSOL shared library"""
+    """Find the LUSOL shared library.
+
+    On macOS, if no pre-compiled dylib is found the function will
+    attempt to build one from source by running ``make`` in the
+    repository root.
+    """
     # Determine library name based on platform
     system = platform.system()
     if system == 'Darwin':
@@ -25,12 +30,14 @@ def _find_library():
         raise OSError(f"Unsupported platform: {system}")
     
     # Search paths for the library
+    pkg_dir = os.path.dirname(__file__)
+    repo_root = os.path.normpath(os.path.join(pkg_dir, '..'))
     search_paths = [
         # Pre-compiled library bundled with the package
-        os.path.join(os.path.dirname(__file__), 'lib'),
+        os.path.join(pkg_dir, 'lib'),
         # Directory relative to this file (for development builds)
-        os.path.join(os.path.dirname(__file__), '..', 'src'),
-        os.path.join(os.path.dirname(__file__), '..', 'matlab'),
+        os.path.join(repo_root, 'src'),
+        os.path.join(repo_root, 'matlab'),
         # System paths
         '/usr/local/lib',
         '/usr/lib',
@@ -40,9 +47,48 @@ def _find_library():
         lib_path = os.path.join(path, lib_name)
         if os.path.exists(lib_path):
             return lib_path
-    
+
+    # On macOS, attempt to build the library from source automatically
+    if system == 'Darwin':
+        lib_path = _build_library_macos(repo_root, pkg_dir)
+        if lib_path is not None:
+            return lib_path
+
     # If not found, try to load from system path
     return lib_name
+
+
+def _build_library_macos(repo_root, pkg_dir):
+    """Try to build libclusol.dylib from source on macOS.
+
+    Returns the path to the built library on success, or ``None``.
+    """
+    import shutil
+    import subprocess
+
+    makefile = os.path.join(repo_root, 'makefile')
+    if not os.path.exists(makefile):
+        return None
+
+    print("libclusol.dylib not found – attempting to build from source …")
+    try:
+        subprocess.check_call(['make', 'clean'], cwd=repo_root)
+        subprocess.check_call(['make'], cwd=repo_root)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("Warning: automatic build failed. "
+              "Please run 'make' manually in the repository root.")
+        return None
+
+    src_lib = os.path.join(repo_root, 'src', 'libclusol.dylib')
+    if not os.path.exists(src_lib):
+        return None
+
+    # Copy built library into the package lib directory for future use
+    lib_dir = os.path.join(pkg_dir, 'lib')
+    os.makedirs(lib_dir, exist_ok=True)
+    dest = os.path.join(lib_dir, 'libclusol.dylib')
+    shutil.copy2(src_lib, dest)
+    return dest
 
 
 # Load the LUSOL C library
