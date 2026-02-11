@@ -30,7 +30,7 @@ def _find_library():
 
     # On macOS, check architecture-specific subdirectory first
     if system == 'Darwin':
-        arch = platform.machine()  # 'arm64' or 'x86_64'
+        arch = platform.machine()  # e.g. 'arm64', 'x86_64'
         search_paths.append(
             os.path.join(pkg_dir, 'lib', f'darwin_{arch}'))
 
