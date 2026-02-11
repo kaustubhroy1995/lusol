@@ -21,12 +21,19 @@ LUSOL maintains LU factors of square or rectangular sparse matrices. This Python
    make
    ```
    
-   This creates `libclusol.so` (Linux) or `libclusol.dylib` (macOS) in the `src/` directory.
+   This creates:
+   - `libclusol.so` on Linux
+   - `libclusol.dylib` on macOS (both Intel and Apple Silicon)
+   - `libclusol.dll` on Windows
 
 2. **Python requirements**:
    - Python 3.6 or higher
    - NumPy >= 1.15.0
    - SciPy >= 1.0.0
+
+**macOS (Apple Silicon) specific requirements:**
+- Install `gfortran` via Homebrew: `brew install gcc`
+- The build automatically detects Apple Silicon (M1/M2/M3) and compiles native ARM64 binaries
 
 ### Install PyLUSOL
 
@@ -221,15 +228,80 @@ pylusol/
 
 ### Library not found
 
-If you get an error about `libclusol.so` or `libclusol.dylib` not being found:
+If you get an error about `libclusol.so`, `libclusol.dylib`, or `libclusol.dll` not being found:
 
 1. Make sure you built the C library: `make`
 2. Check that the library exists in `src/` or `matlab/`
 3. Set the library path manually:
+   
+   **Linux:**
    ```bash
-   export LD_LIBRARY_PATH=/path/to/lusol/src:$LD_LIBRARY_PATH  # Linux
-   export DYLD_LIBRARY_PATH=/path/to/lusol/src:$DYLD_LIBRARY_PATH  # macOS
+   export LD_LIBRARY_PATH=/path/to/lusol/src:$LD_LIBRARY_PATH
    ```
+   
+   **macOS:**
+   ```bash
+   export DYLD_LIBRARY_PATH=/path/to/lusol/src:$DYLD_LIBRARY_PATH
+   ```
+   
+   **Windows:**
+   ```cmd
+   set PATH=C:\path\to\lusol\src;%PATH%
+   ```
+   
+   Or copy the DLL to your working directory:
+   ```bash
+   # In MSYS2 terminal:
+   cp src/libclusol.dll .
+   
+   # In Windows Command Prompt:
+   copy src\libclusol.dll .
+   ```
+
+### Windows-specific issues
+
+**Problem: `libclusol.dll` not found or missing dependencies**
+
+Windows requires additional DLL dependencies (from MinGW-w64) to be in your PATH:
+- `libgfortran-*.dll`
+- `libquadmath-*.dll`
+- `libopenblas.dll` or `libblas.dll`
+- `libgcc_s_seh-*.dll`
+
+**Solution:** Ensure the MinGW-w64 `bin` directory is in your system PATH (e.g., `C:\msys64\mingw64\bin`). This makes all required DLLs accessible.
+
+To verify:
+```cmd
+where libclusol.dll
+where libopenblas.dll
+```
+
+### macOS Apple Silicon issues
+
+**Problem: Build fails with architecture-related errors**
+
+If you encounter errors like `ld: warning: ignoring file ... building for macOS-arm64 but attempting to link with file built for macOS-x86_64`:
+
+**Solution:**
+1. Make sure you have the ARM64 version of gfortran installed via Homebrew:
+   ```bash
+   brew install gcc
+   ```
+2. Clean previous builds and rebuild:
+   ```bash
+   make clean
+   make
+   ```
+3. Verify you're building for the correct architecture:
+   ```bash
+   file src/libclusol.dylib  # Should show "arm64" on Apple Silicon
+   ```
+
+**Problem: Python can't load the library**
+
+If Python gives an error like `dlopen: no suitable image found`:
+
+**Solution:** This usually means architecture mismatch. Ensure your Python installation matches your Mac's architecture. Use `python3 -c "import platform; print(platform.machine())"` to check. On Apple Silicon, this should return `arm64`.
 
 ### Import errors
 
