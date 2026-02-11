@@ -16,24 +16,25 @@ LUSOL maintains LU factors of square or rectangular sparse matrices. This Python
 
 ### Prerequisites
 
-Pre-compiled shared libraries for **Linux (x86_64)** and **Windows (x86_64)** are included in `pylusol/lib/`. No compilation is needed for these platforms.
+Pre-compiled shared libraries for **Linux (x86_64)**, **Windows (x86_64)**, and **macOS (Apple Silicon arm64)** are included in `pylusol/lib/`. No compilation is needed for these platforms.
 
-For **macOS**, build the LUSOL C library first:
+For **macOS Intel**, build the LUSOL C library first:
 ```bash
 make
 ```
 
 This creates:
-- `libclusol.dylib` on macOS (both Intel and Apple Silicon)
+- `libclusol.dylib` on macOS
 
 **Python requirements**:
 - Python 3.6 or higher
 - NumPy >= 1.15.0
 - SciPy >= 1.0.0
 
-**macOS (Apple Silicon) specific requirements:**
-- Install `gfortran` via Homebrew: `brew install gcc`
-- The build automatically detects Apple Silicon (M1/M2/M3) and compiles native ARM64 binaries
+**macOS (Apple Silicon) specific notes:**
+- A pre-compiled `libclusol.dylib` for Apple Silicon (arm64) is bundled in `pylusol/lib/darwin_arm64/`
+- To rebuild from source, install `gfortran` via Homebrew (`brew install gcc`) and run `make`
+- Use `make bundle` to copy the built library to the packaging directory
 
 ### Install PyLUSOL
 

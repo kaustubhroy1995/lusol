@@ -238,6 +238,17 @@ matlab: $(MATLAB_FILES)
 matlab_test: $(MATLAB_FILES)
 	$(ML) $(MLFLAGS) -r "cd matlab; lusol_test; exit"
 
+# Bundle built library into pylusol/lib for packaging
+.PHONY: bundle
+ifneq ($(DARWIN),)
+bundle: src/libclusol.$(LIB_SUFFIX)
+	mkdir -p pylusol/lib/darwin_$(ARCH)
+	cp src/libclusol.$(LIB_SUFFIX) pylusol/lib/darwin_$(ARCH)/
+else
+bundle: src/libclusol.$(LIB_SUFFIX)
+	cp src/libclusol.$(LIB_SUFFIX) pylusol/lib/
+endif
+
 .PHONY: clean
 clean:
 	$(RM) src/*.o

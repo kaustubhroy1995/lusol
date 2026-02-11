@@ -24,13 +24,22 @@ def _find_library():
     else:
         raise OSError(f"Unsupported platform: {system}")
     
-    # Search paths for the library
-    search_paths = [
+    # Build search paths for the library
+    pkg_dir = os.path.dirname(__file__)
+    search_paths = []
+
+    # On macOS, check architecture-specific subdirectory first
+    if system == 'Darwin':
+        arch = platform.machine()  # 'arm64' or 'x86_64'
+        search_paths.append(
+            os.path.join(pkg_dir, 'lib', f'darwin_{arch}'))
+
+    search_paths += [
         # Pre-compiled library bundled with the package
-        os.path.join(os.path.dirname(__file__), 'lib'),
+        os.path.join(pkg_dir, 'lib'),
         # Directory relative to this file (for development builds)
-        os.path.join(os.path.dirname(__file__), '..', 'src'),
-        os.path.join(os.path.dirname(__file__), '..', 'matlab'),
+        os.path.join(pkg_dir, '..', 'src'),
+        os.path.join(pkg_dir, '..', 'matlab'),
         # System paths
         '/usr/local/lib',
         '/usr/lib',

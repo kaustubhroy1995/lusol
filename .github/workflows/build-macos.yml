@@ -1,0 +1,34 @@
+name: Build macOS Libraries
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/**'
+      - 'makefile'
+
+jobs:
+  build-macos-arm64:
+    runs-on: macos-14  # Apple Silicon (M1) runner
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install gfortran
+        run: brew install gcc
+
+      - name: Build libclusol.dylib
+        run: make
+
+      - name: Bundle library
+        run: make bundle
+
+      - name: Verify library architecture
+        run: |
+          file pylusol/lib/darwin_arm64/libclusol.dylib
+          lipo -info pylusol/lib/darwin_arm64/libclusol.dylib
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libclusol-darwin-arm64
+          path: pylusol/lib/darwin_arm64/libclusol.dylib
