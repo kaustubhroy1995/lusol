@@ -74,8 +74,8 @@ def _build_library_macos(repo_root, pkg_dir):
     try:
         subprocess.check_call(['make', 'clean'], cwd=repo_root)
         subprocess.check_call(['make'], cwd=repo_root)
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        print("Warning: automatic build failed. "
+    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
+        print(f"Warning: automatic build failed: {exc}\n"
               "Please run 'make' manually in the repository root.")
         return None
 
