@@ -118,8 +118,8 @@ ifneq ($(DARWIN),)
   # Note: You can override the Matlab path by setting MATLAB_PATH environment variable
   # Example: export MATLAB_PATH=/Applications/MATLAB_R2024a.app
   ifeq ($(ARCH),arm64)
-    # Apple Silicon - Matlab R2023b or later required
-    MATLAB_PATH ?= /Applications/MATLAB_R2023b.app
+    # Apple Silicon - Matlab R2024a or later required
+    MATLAB_PATH ?= /Applications/MATLAB_R2024a.app
     LDLIBS += -L$(MATLAB_PATH)/bin/maca64 -lmwblas
   else
     # Intel Mac - adjust version as needed
