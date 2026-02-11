@@ -121,10 +121,6 @@ ifneq ($(DARWIN),)
     # Apple Silicon - Matlab R2024a or later required
     MATLAB_PATH ?= /Applications/MATLAB_R2024a.app
     LDLIBS += -L$(MATLAB_PATH)/bin/maca64 -lmwblas
-  else
-    # Intel Mac - adjust version as needed
-    MATLAB_PATH ?= /Applications/MATLAB_R2015b.app
-    LDLIBS += -L$(MATLAB_PATH)/bin/maci64 -lmwblas
   endif
 else ifneq ($(WINDOWS),)
   # settings for windows
